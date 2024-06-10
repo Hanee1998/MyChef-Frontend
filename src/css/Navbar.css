@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
+:root {
+  --darkmatter: #34495e;
+  --darkermatter: #2c3e50;
+  --greenapple: #2ecc71;
+  --greyapple: #ecf0f1;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Roboto", Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.nav {
+  background: #E1E2E2;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, .1), 0 2px 4px -1px rgba(0, 0, 0, .06);
+  justify-content: space-between;
+  align-items: center;
+  font-size: large;
+  
+}
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color:#FB8122;
+}
+
+li {
+  float: right;
+  padding: 5px;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+li a:hover {
+  background-color: #111;
+}
+.childnav {
+  width: 135%;
+  margin-right: 360px;
+}
+
+.brand {
+  cursor: pointer;
+  justify-self: left;
+  margin-left: 15px;
+  align-items: center;
+}
+
+.brand img {
+  max-width: 190px;
+  height: 60px;
+  margin-right: 10px;
+}
+
+.content {
+  align-content: space-evenly;
+  display: grid;
+  grid-auto-flow: column;
+  place-items: center;
+}
+
+.dropdown {
+  background-color: #f8f8f8;
+  display: none;
+  text-align: center;
+}
+
+.dropdown a {
+  padding: 10px;
+}
+
+.dropdown a:hover {
+  color: gray;
+  background-color:rgba(245, 245, 245, 0.267);
+}
+
+.links {
+  display: grid;
+  grid-auto-columns: minmax(min-content, 50px);
+  grid-auto-flow: column;
+  grid-gap: 15px;
+  place-items: center;
+}
+
+.links.nav-items {
+  justify-self: right;
+  padding-right: 15px;
+}
+
+.menu {
+  -webkit-user-select: none;
+  cursor: pointer;
+  display: none;
+  justify-self: right;
+  margin-right: 15px;
+  user-select: none;
+}
+
+.menu:hover {
+  opacity: 0.5;
+}
+
+@media only screen and (max-width: 768px) {
+  
+  .nav .content .links {
+    display: none;
+  }
+  
+  .nav .content .menu {
+    display: initial;
+  }
+}
