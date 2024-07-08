@@ -1,10 +1,26 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import '../css/Navbar.css';
 
 const Navbar = () => {
+  const { currentUser, logout } = useAuth();
+  const [userName, setUserName] = useState(null);
+  const [profileDropdownVisible, setProfileDropdownVisible] = useState(false);
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
   const navRef = useRef(null);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(sessionStorage.getItem('user'));
+    if (storedUser) {
+      setUserName(storedUser.displayName || storedUser.email.split('@')[0]);
+    }
+  }, [currentUser]);
+
+  const handleLogout = async () => {
+    await logout();
+    setUserName(null);
+  };
 
   const menu = () => {
     if (dropdownRef.current.style.display === "grid") {
@@ -14,6 +30,10 @@ const Navbar = () => {
       dropdownRef.current.style.display = "grid";
       buttonRef.current.innerHTML = "close";
     }
+  };
+
+  const toggleProfileDropdown = () => {
+    setProfileDropdownVisible(!profileDropdownVisible);
   };
 
   useEffect(() => {
@@ -30,6 +50,7 @@ const Navbar = () => {
           dropdownRef.current.style.display = "none";
           buttonRef.current.innerHTML = "menu";
         }
+        setProfileDropdownVisible(false);
       }
     };
 
@@ -44,25 +65,63 @@ const Navbar = () => {
 
   return (
     <div className="nav" ref={navRef}>
-      <div className="content">
+      <div className="nav-content">
         <h1 className="brand">
           <img src="/mychef_logo.png" alt="Logo" />
         </h1>
-        <div className='childnav'>
+        <div className="links nav-items">
+          <a href="/">Home</a>
+          {currentUser ? (
+            <>
+                                  <a href="/chatPrompt">Chat Bot</a>
 
-          <ul>
-            <li><a href="/Signup">Signup</a></li>
-            <li><a href="/Login">Login</a></li>
-            <li><a href="/">Home</a></li>
+                      <a href="/contactus">Contact Us</a>
+                      <a href="/aboutus">About Us</a>
 
-          </ul>
+
+              {userName && (
+                <div className="avatar" onClick={toggleProfileDropdown}>
+                  {userName.charAt(0).toUpperCase()}
+                </div>
+              )}
+              {profileDropdownVisible && (
+                <div className="profile-dropdown">
+                  <a href="profile/personal-info">Manage Profile</a>
+                  <button onClick={handleLogout} className="logout-button">Logout</button>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <a href="/Login">Login</a>
+              <a href="/Signup">Signup</a>
+            </>
+          )}
         </div>
-        <i className="material-icons menu" onClick={menu} ref={buttonRef}>Menue</i>
+        <i className="material-icons menu" onClick={menu} ref={buttonRef}>menu</i>
       </div>
       <div className="dropdown" id="dropdown" ref={dropdownRef}>
         <a href="/">Home</a>
-        <a href="/Login">Login</a>
-        <a href="/Signup">Signup</a>
+        {currentUser ? (
+          <>
+            {userName && (
+              <div className="avatar" onClick={toggleProfileDropdown}>
+                {userName.charAt(0).toUpperCase()}
+              </div>
+            )}
+            {profileDropdownVisible && (
+              <div className="profile-dropdown">
+                <a href="/profile/personal-info">Manage Profile</a>
+                <button onClick={handleLogout} className="logout-button">Logout</button>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <a href="/Login">Login</a>
+            <a href="/Signup">Signup</a>
+          </>
+        )}
       </div>
     </div>
   );

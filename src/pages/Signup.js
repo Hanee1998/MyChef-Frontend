@@ -2,42 +2,66 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import '../css/Login.css';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Signup = () => {
-  const { signup } = useAuth();
+  const { signup, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+
+    if (!validateEmail(email)) {
+      toast.error('Invalid email address');
       return;
     }
+
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters long');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
     try {
       await signup(email, password);
-      setMessage('Account created successfully');
+      toast.success('Account created successfully');
       navigate('/Login');
     } catch (error) {
-      setError('Failed to create account');
+      toast.error(error.message);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await loginWithGoogle();
+      navigate('/');
+    } catch (error) {
+      toast.error('Failed to sign in with Google');
       console.log(error);
     }
   };
 
   return (
-    <main className={`content login-content`}>
-
     <div className="login-page">
+      <ToastContainer />
       <div className="login-container">
-        <h1>MyChef Signup</h1>
+        <h1>Recipe Generator Signup</h1>
         <p>Enter email and password to create a new account.</p>
         <form onSubmit={handleSubmit}>
-          {error && <div className="error-message">{error}</div>}
-          {message && <div className="success-message">{message}</div>}
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input type="email" id="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
@@ -52,10 +76,13 @@ const Signup = () => {
           </div>
           <button type="submit">Signup</button>
         </form>
-        <a href="/login">Already have an account?</a>
+        <button onClick={handleGoogleSignIn} className="google-button">
+          <img src="./icons8-google-48.png" alt="Google logo" width="20" height="20" />
+          Continue with Google
+        </button>
+        <a href="/Login">Already have an account?</a>
       </div>
     </div>
-    </main>
   );
 };
 
