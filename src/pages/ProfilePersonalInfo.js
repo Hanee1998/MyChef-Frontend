@@ -21,7 +21,7 @@ const ProfilePersonalInfo = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/users/${currentUser.email}`);
+        const response = await fetch(`http://localhost:8080/users/${currentUser.email}`);
         if (response.ok) {
           const data = await response.json();
           if (data) {
@@ -83,7 +83,7 @@ const ProfilePersonalInfo = () => {
 
     // Empty field validation
     for (const [key, value] of Object.entries(profile)) {
-      if (!value && key !== 'phone' && key !== 'country' && key !== 'address' && key !== 'city' && key !== 'zipCode') {
+      if (!value && key !== 'phone' && key !== 'country' && key !== 'address' && key !== 'city' && key !== 'zipCode' && key !=='isPremiumUser' && key !=='recipeCount' && key !=='earnings' ) {
         toast.error(`Field cannot be empty`);
         return;
       }
@@ -107,7 +107,7 @@ const ProfilePersonalInfo = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/users/${currentUser.email}`, {
+      const response = await fetch(`http://localhost:8080/users/${currentUser.email}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -167,7 +167,7 @@ const ProfilePersonalInfo = () => {
             <label>Zip Code</label>
             <input type="text" name="zipCode" value={profile.zipCode} onChange={handleChange} />
           </div>
-          <button type="submit">Save Changes</button>
+          <button className='save-button' type="submit">Save Changes</button>
         </form>
       )}
     </div>

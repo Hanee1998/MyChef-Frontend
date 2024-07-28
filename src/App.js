@@ -10,8 +10,13 @@ import Profile from './pages/Profile';
 import ProfilePersonalInfo from './pages/ProfilePersonalInfo';
 import ProfilePassword from './pages/ProfilePassword';
 import ContactUs from './pages/ContactUs';
+import MyRecipe from './pages/MyRecipe';
+import UserRecipes from './pages/UserRecipes'
+import RecipeDetails from './pages/RecipeDetails';
 import AboutUs from './pages/AboutUs';
-import ChatPrompt from './pages/ChatPrompt ';
+import AddRecipes from './pages/AddRecipes';
+import RecepieGenerator from './pages/RecipesGenerate'
+import PurchasePremium from './pages/PurchasePremium'
 const App = () => {
   return (
     <Router>
@@ -24,11 +29,18 @@ const App = () => {
             <Route path="/profile/*" element={<Profile />}>
               <Route path="personal-info" element={<ProfilePersonalInfo />} />
               <Route path="password" element={<ProfilePassword />} />
+              <Route path="myRecipe" element={<MyRecipe />} />
+              <Route path="purchase-premium" element={<PurchasePremium />} />
+
+
             </Route>            <Route path="/" element={<Home />} />
             <Route path="/contactus" element={<ContactUs />} />
             <Route path="/aboutus" element={<AboutUs />} />
-            <Route path="/chatPrompt" element={<ChatPrompt  />} />
+            <Route path="/addRecipes" element={<AddRecipes  />} />
+            <Route path="/userRecipes" element={<UserRecipes  />} />
+            <Route path="/recipes/:id" element={<RecipeDetails />} />
 
+            <Route path="/recipesGenerator" element={<RecepieGenerator  />} />
 
           </Routes>
         </Layout>

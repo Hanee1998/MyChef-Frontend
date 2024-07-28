@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }) => {
 
   const saveUserToDB = async (user, method) => {
     try {
-      const response = await fetch(`http://localhost:5000/users/${user.email}`, {
+      const response = await fetch(`http://localhost:8080/users/${user.email}`, {
         method,
         headers: {
           'Content-Type': 'application/json',

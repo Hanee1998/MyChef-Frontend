@@ -74,7 +74,7 @@ const Signup = () => {
             <label htmlFor="confirmPassword">Confirm Password</label>
             <input type="password" id="confirmPassword" name="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
           </div>
-          <button type="submit">Signup</button>
+          <button className='signup-button' type="submit">Signup</button>
         </form>
         <button onClick={handleGoogleSignIn} className="google-button">
           <img src="./icons8-google-48.png" alt="Google logo" width="20" height="20" />

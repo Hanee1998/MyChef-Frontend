@@ -1,20 +1,44 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Avatar,
+  Button,
+  Tooltip,
+  MenuItem,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import '../css/Navbar.css';
 
 const Navbar = () => {
   const { currentUser, logout } = useAuth();
   const [userName, setUserName] = useState(null);
-  const [profileDropdownVisible, setProfileDropdownVisible] = useState(false);
-  const dropdownRef = useRef(null);
-  const buttonRef = useRef(null);
-  const navRef = useRef(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
 
   useEffect(() => {
-    const storedUser = JSON.parse(sessionStorage.getItem('user'));
-    if (storedUser) {
-      setUserName(storedUser.displayName || storedUser.email.split('@')[0]);
-    }
+    const updateUserName = () => {
+      if (currentUser) {
+        const storedUser = JSON.parse(sessionStorage.getItem('user'));
+        if (storedUser) {
+          setUserName(storedUser.displayName || storedUser.email.split('@')[0]);
+        } else if (currentUser.displayName) {
+          setUserName(currentUser.displayName);
+        } else {
+          setUserName(currentUser.email.split('@')[0]);
+        }
+      } else {
+        setUserName(null);
+      }
+    };
+
+    updateUserName();
   }, [currentUser]);
 
   const handleLogout = async () => {
@@ -22,108 +46,217 @@ const Navbar = () => {
     setUserName(null);
   };
 
-  const menu = () => {
-    if (dropdownRef.current.style.display === "grid") {
-      dropdownRef.current.style.display = "none";
-      buttonRef.current.innerHTML = "menu";
-    } else {
-      dropdownRef.current.style.display = "grid";
-      buttonRef.current.innerHTML = "close";
-    }
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
   };
 
-  const toggleProfileDropdown = () => {
-    setProfileDropdownVisible(!profileDropdownVisible);
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768) {
-        dropdownRef.current.style.display = "none";
-        buttonRef.current.innerHTML = "menu";
-      }
-    };
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
 
-    const handleClickOutside = (event) => {
-      if (navRef.current && !navRef.current.contains(event.target)) {
-        if (dropdownRef.current.style.display === "grid") {
-          dropdownRef.current.style.display = "none";
-          buttonRef.current.innerHTML = "menu";
-        }
-        setProfileDropdownVisible(false);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
 
   return (
-    <div className="nav" ref={navRef}>
-      <div className="nav-content">
-        <h1 className="brand">
-          <img src="/mychef_logo.png" alt="Logo" />
-        </h1>
-        <div className="links nav-items">
-          <a href="/">Home</a>
-          {currentUser ? (
-            <>
-                                  <a href="/chatPrompt">Chat Bot</a>
+    <AppBar position="static">
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            <img src="/mychef_logo.png" alt="Logo" style={{ height: '70px' }} />
+          </Typography>
 
-                      <a href="/contactus">Contact Us</a>
-                      <a href="/aboutus">About Us</a>
-
-
-              {userName && (
-                <div className="avatar" onClick={toggleProfileDropdown}>
-                  {userName.charAt(0).toUpperCase()}
-                </div>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+              size="large"
+              aria-label="menu"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{
+                display: { xs: 'block', md: 'none' },
+              }}
+            >
+              <MenuItem onClick={handleCloseNavMenu}>
+                <a href="/" style={{ textDecoration: 'none', color: 'inherit' }}>Home</a>
+              </MenuItem>
+              {currentUser ? (
+                <>
+                  <MenuItem onClick={handleCloseNavMenu}>
+                    <a href="/addRecipes" style={{ textDecoration: 'none', color: 'inherit' }}>Add Recipes</a>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseNavMenu}>
+                    <a href="/userRecipes" style={{ textDecoration: 'none', color: 'inherit' }}>User Recipes</a>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseNavMenu}>
+                    <a href="/recipesGenerator" style={{ textDecoration: 'none', color: 'inherit' }}>Recipes Generator</a>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseNavMenu}>
+                    <a href="/contactus" style={{ textDecoration: 'none', color: 'inherit' }}>Contact Us</a>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseNavMenu}>
+                    <a href="/aboutus" style={{ textDecoration: 'none', color: 'inherit' }}>About Us</a>
+                  </MenuItem>
+                </>
+              ) : (
+                <>
+                  <MenuItem onClick={handleCloseNavMenu}>
+                    <a href="/Login" style={{ textDecoration: 'none', color: 'inherit' }}>Login</a>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseNavMenu}>
+                    <a href="/Signup" style={{ textDecoration: 'none', color: 'inherit' }}>Signup</a>
+                  </MenuItem>
+                </>
               )}
-              {profileDropdownVisible && (
-                <div className="profile-dropdown">
-                  <a href="profile/personal-info">Manage Profile</a>
-                  <button onClick={handleLogout} className="logout-button">Logout</button>
-                </div>
-              )}
-            </>
-          ) : (
-            <>
-              <a href="/Login">Login</a>
-              <a href="/Signup">Signup</a>
-            </>
-          )}
-        </div>
-        <i className="material-icons menu" onClick={menu} ref={buttonRef}>menu</i>
-      </div>
-      <div className="dropdown" id="dropdown" ref={dropdownRef}>
-        <a href="/">Home</a>
-        {currentUser ? (
-          <>
-            {userName && (
-              <div className="avatar" onClick={toggleProfileDropdown}>
-                {userName.charAt(0).toUpperCase()}
-              </div>
+            </Menu>
+          </Box>
+          <Typography
+            variant="h5"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              mr: 2,
+              display: { xs: 'flex', md: 'none' },
+              flexGrow: 1,
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            <img src="/mychef_logo.png" alt="Logo" style={{ height: '50px' }} />
+          </Typography>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            <Button
+              onClick={handleCloseNavMenu}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              <a href="/" style={{ textDecoration: 'none', color: 'inherit' }}>Home</a>
+            </Button>
+            {currentUser ? (
+              <>
+                <Button
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  <a href="/addRecipes" style={{ textDecoration: 'none', color: 'inherit' }}>Add Recipes</a>
+                </Button>
+                <Button
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  <a href="/userRecipes" style={{ textDecoration: 'none', color: 'inherit' }}>User Recipes</a>
+                </Button>
+                <Button
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  <a href="/recipesGenerator" style={{ textDecoration: 'none', color: 'inherit' }}>Recipes Generator</a>
+                </Button>
+                <Button
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  <a href="/contactus" style={{ textDecoration: 'none', color: 'inherit' }}>Contact Us</a>
+                </Button>
+                <Button
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  <a href="/aboutus" style={{ textDecoration: 'none', color: 'inherit' }}>About Us</a>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  <a href="/Login" style={{ textDecoration: 'none', color: 'inherit' }}>Login</a>
+                </Button>
+                <Button
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  <a href="/Signup" style={{ textDecoration: 'none', color: 'inherit' }}>Signup</a>
+                </Button>
+              </>
             )}
-            {profileDropdownVisible && (
-              <div className="profile-dropdown">
-                <a href="/profile/personal-info">Manage Profile</a>
-                <button onClick={handleLogout} className="logout-button">Logout</button>
-              </div>
-            )}
-          </>
-        ) : (
-          <>
-            <a href="/Login">Login</a>
-            <a href="/Signup">Signup</a>
-          </>
-        )}
-      </div>
-    </div>
+          </Box>
+
+          <Box sx={{ flexGrow: 0 }}>
+            {currentUser ? (
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar>{userName ? userName.charAt(0).toUpperCase() : 'U'}</Avatar>
+                </IconButton>
+              </Tooltip>
+            ) : null}
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              <MenuItem onClick={handleCloseUserMenu}>
+                <a href="/profile/personal-info" style={{ textDecoration: 'none', color: 'inherit' }}>Manage Profile</a>
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>
+                <Typography textAlign="center">Logout</Typography>
+              </MenuItem>
+            </Menu>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 };
 

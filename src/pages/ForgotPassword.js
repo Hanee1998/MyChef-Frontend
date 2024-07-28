@@ -17,7 +17,7 @@ const ForgotPassword = () => {
       setMessage('Check your inbox for further instructions');
       setTimeout(() => {
         navigate('/Login');
-      }, 5000);
+      }, 8080);
     } catch (error) {
       setError('Failed to reset password');
       console.log(error);
@@ -37,7 +37,7 @@ const ForgotPassword = () => {
               <label htmlFor="email">Email</label>
               <input type="email" id="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
-            <button type="submit">Reset Password</button>
+            <button className='forgot-password-button' type="submit">Reset Password</button>
           </form>
         </div>
       </div>

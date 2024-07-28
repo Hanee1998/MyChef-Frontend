@@ -56,7 +56,7 @@ const ProfilePassword = () => {
           <label>Confirm New Password</label>
           <input type="password" name="confirmNewPassword" value={password.confirmNewPassword} onChange={handlePasswordChange} />
         </div>
-        <button type="submit">Change Password</button>
+        <button className='change-password-button' type="submit">Change Password</button>
       </form>
     </div>
   );
