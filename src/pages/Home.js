@@ -96,10 +96,10 @@ function Home() {
       <section className="gallery-section">
         <h2>Gallery of Our Delicious Recipes</h2>
         <div className="gallery-grid">
-          <img src="/image1.jpeg" alt="Food 1" />
-          <img src="/image2.jpeg" alt="Food 2" />
-          <img src="/image3.jpeg" alt="Food 3" />
-          <img src="/image4.jpeg" alt="Food 4" />
+          <img src="image1.png" alt="Food 1" />
+          <img src="image2.png" alt="Food 2" />
+          <img src="image3.png" alt="Food 3" />
+          <img src="image4.png" alt="Food 4" />
         </div>
       </section>
 
