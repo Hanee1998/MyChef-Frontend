@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaHeart, FaRegHeart, FaBookmark, FaRegBookmark } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const RecipeDisplay = ({ recipe, selectedTitleCard, protein, style, cuisine }) => {
   const { currentUser } = useAuth();
   const [liked, setLiked] = useState(false);
+  const [saved, setSaved] = useState(false); // New state for save functionality
   const [likeCount, setLikeCount] = useState(recipe.likeCount);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (recipe && currentUser) {
       setLiked(recipe.likedBy.includes(currentUser.email));
+      setSaved(recipe.savedBy && recipe.savedBy.includes(currentUser.email)); // Check if recipe is already saved
     }
   }, [recipe, currentUser]);
 
   const handleToggleLike = async () => {
     if (!currentUser) return;
 
-    const url = `http://localhost:8080/recipes/recipes/${recipe._id}/${liked ? 'unlike' : 'like'}`;
+    const url = `${process.env.BACKEND_URL}/recipes/recipes/${recipe._id}/${liked ? 'unlike' : 'like'}`;
 
     try {
       const response = await fetch(url, {
@@ -42,6 +44,31 @@ const RecipeDisplay = ({ recipe, selectedTitleCard, protein, style, cuisine }) =
     }
   };
 
+  const handleToggleSave = async () => {
+    if (!currentUser) return;
+
+    const url = `${process.env.BACKEND_URL}/users/${currentUser.email}/saveRecipe`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ recipeId: recipe._id })
+      });
+
+      if (response.ok) {
+        setSaved(!saved);
+      } else {
+        const result = await response.json();
+        console.error(result.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   if (!recipe) {
     return null;
   }
@@ -50,6 +77,13 @@ const RecipeDisplay = ({ recipe, selectedTitleCard, protein, style, cuisine }) =
 
   return (
     <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
+      {recipe.image && (
+        <img
+          src={recipe.image}
+          alt={recipe.title}
+          className="w-full h-80 object-scale-down"
+        />
+      )}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">{selectedTitleCard}</h1>
         <div className="flex items-center space-x-4">
@@ -60,6 +94,12 @@ const RecipeDisplay = ({ recipe, selectedTitleCard, protein, style, cuisine }) =
             {liked ? <FaHeart /> : <FaRegHeart />}
           </button>
           <span>{likeCount}</span>
+          <button
+            className="text-blue-500 text-2xl transition-transform duration-300 ease-in-out transform hover:scale-125"
+            onClick={handleToggleSave}
+          >
+            {saved ? <FaBookmark /> : <FaRegBookmark />}
+          </button>
         </div>
       </div>
       <div className="flex space-x-2 mb-4">
@@ -90,7 +130,6 @@ const RecipeDisplay = ({ recipe, selectedTitleCard, protein, style, cuisine }) =
           <li key={index}>{step}</li>
         ))}
       </ol>
-     
     </div>
   );
 };

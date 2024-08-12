@@ -3,19 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PayPalButton from './PayPalButton';
 
 const PurchasePremium = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [premiumPrice, setPremiumPrice] = useState(null);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
       if (currentUser) {
         try {
-          console.log(currentUser);
-          const response = await fetch(`http://localhost:8080/users/${currentUser.email}`);
+          const response = await fetch(`${process.env.BACKEND_URL}/users/${currentUser.email}`);
           if (response.ok) {
             const data = await response.json();
             setUser(data);
@@ -24,29 +25,42 @@ const PurchasePremium = () => {
           }
         } catch (error) {
           console.error('Error:', error);
-        } finally {
-          setLoading(false);
         }
       }
     };
 
+    const fetchPremiumPrice = async () => {
+      try {
+        const response = await fetch('${process.env.BACKEND_URL}/settings/premiumMembershipPrice');
+        if (response.ok) {
+          const data = await response.json();
+          setPremiumPrice(data.price);
+        } else {
+          console.error('Failed to fetch premium membership price');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchUserDetails();
+    fetchPremiumPrice();
   }, [currentUser]);
 
-  const handlePurchase = async () => {
-    // Logic to handle premium purchase
-    // After successful purchase, update the user's isPremiumUser field in the backend
+  const handlePaymentSuccess = async (order) => {
     try {
-      const response = await fetch(`http://localhost:8080/users/${currentUser.email}/purchasePremium`, {
+      const response = await fetch(`${process.env.BACKEND_URL}/users/${currentUser.email}/purchasePremium`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       });
 
       if (response.ok) {
         toast.success('Premium purchased successfully!');
-        navigate('/add'); // Redirect back to add recipe page after purchase
+        navigate('/addRecipes'); // Redirect back to add recipe page after purchase
       } else {
         toast.error('Failed to purchase premium');
       }
@@ -74,12 +88,10 @@ const PurchasePremium = () => {
       {user && !user.isPremiumUser && (
         <>
           <p className="text-gray-700 mb-4">You have {3 - user.recipeCount} recipe(s) left to add.</p>
-          <button
-            onClick={handlePurchase}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-          >
-            Purchase Premium for $10/month
-          </button>
+          {premiumPrice !== null && (
+            <p className="text-gray-700 mb-4">Premium membership is billed at ${premiumPrice} per month.</p>
+          )}
+          <PayPalButton onSuccess={handlePaymentSuccess} />
         </>
       )}
       {user && user.isPremiumUser && (
@@ -88,7 +100,7 @@ const PurchasePremium = () => {
       <div className="mt-6">
         <h2 className="text-xl font-bold mb-2">Terms and Conditions</h2>
         <ul className="list-disc list-inside text-gray-600 space-y-2">
-          <li>Premium membership is billed at $10 per month.</li>
+          <li>Premium membership is billed at ${premiumPrice} per month.</li>
           <li>You can cancel your premium membership at any time.</li>
           <li>No refunds will be issued for partial months.</li>
           <li>By purchasing premium, you agree to our terms and conditions.</li>

@@ -23,18 +23,27 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
+  const fetchUserDetails = async (user) => {
+    // Assume there's an endpoint to fetch user details including isAdmin
+    const response = await fetch(`${process.env.BACKEND_URL}/users/${user.email}`);
+    const data = await response.json();
+    return data;
+  };
+
   const signup = async (email, password) => {
     const result = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(result.user, { displayName: email.split('@')[0] });
-    setCurrentUser(result.user);
-    sessionStorage.setItem('user', JSON.stringify(result.user));
+    const userDetails = await fetchUserDetails(result.user);
+    setCurrentUser({ ...result.user, ...userDetails });
+    sessionStorage.setItem('user', JSON.stringify({ ...result.user, ...userDetails }));
     await saveUserToDB(result.user, 'POST'); // Save user to database
   };
 
   const login = async (email, password) => {
     const result = await signInWithEmailAndPassword(auth, email, password);
-    setCurrentUser(result.user);
-    sessionStorage.setItem('user', JSON.stringify(result.user));
+    const userDetails = await fetchUserDetails(result.user);
+    setCurrentUser({ ...result.user, ...userDetails });
+    sessionStorage.setItem('user', JSON.stringify({ ...result.user, ...userDetails }));
   };
 
   const logout = async () => {
@@ -55,8 +64,9 @@ export const AuthProvider = ({ children }) => {
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
-    setCurrentUser(result.user);
-    sessionStorage.setItem('user', JSON.stringify(result.user));
+    const userDetails = await fetchUserDetails(result.user);
+    setCurrentUser({ ...result.user, ...userDetails });
+    sessionStorage.setItem('user', JSON.stringify({ ...result.user, ...userDetails }));
     await saveUserToDB(result.user, 'PUT'); // Save user to database
   };
 
@@ -73,11 +83,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, user => {
-      setCurrentUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        sessionStorage.setItem('user', JSON.stringify(user));
+        const userDetails = await fetchUserDetails(user);
+        setCurrentUser({ ...user, ...userDetails });
+        sessionStorage.setItem('user', JSON.stringify({ ...user, ...userDetails }));
       } else {
+        setCurrentUser(null);
         sessionStorage.removeItem('user');
       }
     });
@@ -86,7 +98,7 @@ export const AuthProvider = ({ children }) => {
 
   const saveUserToDB = async (user, method) => {
     try {
-      const response = await fetch(`http://localhost:8080/users/${user.email}`, {
+      const response = await fetch(`${process.env.BACKEND_URL}/users/${user.email}`, {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -96,7 +108,8 @@ export const AuthProvider = ({ children }) => {
           firstName: '',
           lastName: '',
           address: '',
-          phone: ''
+          phone: '',
+          isAdmin: false // default value
         }),
       });
       if (!response.ok) {

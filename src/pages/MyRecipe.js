@@ -13,7 +13,7 @@ const MyRecipes = () => {
     const fetchRecipes = async () => {
       if (currentUser) {
         try {
-          const response = await fetch(`http://localhost:8080/recipes/user/${currentUser.email}/recipes`);
+          const response = await fetch(`${process.env.BACKEND_URL}/recipes/user/${currentUser.email}/recipes`);
           if (response.ok) {
             const data = await response.json();
             setRecipes(data);
@@ -29,7 +29,7 @@ const MyRecipes = () => {
     const fetchUserDetails = async () => {
       if (currentUser) {
         try {
-          const response = await fetch(`http://localhost:8080/users/${currentUser.email}`);
+          const response = await fetch(`${process.env.BACKEND_URL}/users/${currentUser.email}`);
           if (response.ok) {
             const data = await response.json();
             setUser(data);
@@ -50,7 +50,7 @@ const MyRecipes = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/recipes/recipes/${id}`, {
+      const response = await fetch(`${process.env.BACKEND_URL}/recipes/recipes/${id}`, {
         method: 'DELETE'
       });
 
@@ -66,7 +66,7 @@ const MyRecipes = () => {
 
   const handleSave = async () => {
     // Refresh recipes after saving
-    const response = await fetch(`http://localhost:8080/recipes/user/${currentUser.email}/recipes`);
+    const response = await fetch(`${process.env.BACKEND_URL}/recipes/user/${currentUser.email}/recipes`);
     if (response.ok) {
       const data = await response.json();
       setRecipes(data);

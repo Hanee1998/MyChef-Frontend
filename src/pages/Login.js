@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import '../css/Login.css';
@@ -7,10 +7,18 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
-  const { login, loginWithGoogle } = useAuth();
+  const { login, loginWithGoogle, currentUser } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    if (currentUser && currentUser.isAdmin) {
+      navigate('/admin/settings');
+    } else if (currentUser) {
+      navigate('/');
+    }
+  }, [currentUser, navigate]);
 
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -38,7 +46,6 @@ const Login = () => {
     try {
       await login(email, password);
       toast.success('Logged in successfully');
-      navigate('/');
     } catch (error) {
       toast.error(error.message);
     }
@@ -47,7 +54,7 @@ const Login = () => {
   const handleGoogleSignIn = async () => {
     try {
       await loginWithGoogle();
-      navigate('/');
+      toast.success('Logged in successfully');
     } catch (error) {
       toast.error('Failed to sign in with Google');
       console.log(error);

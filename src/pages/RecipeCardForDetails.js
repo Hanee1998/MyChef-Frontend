@@ -17,7 +17,7 @@ const RecipeCardForDetails = ({ recipe }) => {
   const handleLike = async () => {
     if (!currentUser) return;
 
-    const url = `http://localhost:8080/recipes/recipes/${recipe._id}/${liked ? 'unlike' : 'like'}`;
+    const url = `${process.env.BACKEND_URL}/recipes/recipes/${recipe._id}/${liked ? 'unlike' : 'like'}`;
 
     try {
       const response = await fetch(url, {
@@ -43,7 +43,15 @@ const RecipeCardForDetails = ({ recipe }) => {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6 mb-4">
+      {recipe.image && (
+        <img
+          src={recipe.image}
+          alt={recipe.title}
+          className="w-full h-80 object-scale-down"
+        />
+      )}
       <div className="flex justify-between items-center mb-2">
+
         <h2 className="text-2xl font-bold">{recipe.title}</h2>
         <div className="flex items-center space-x-2">
           <button

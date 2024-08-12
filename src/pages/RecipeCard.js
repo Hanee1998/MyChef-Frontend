@@ -12,10 +12,19 @@ const RecipeCard = ({ recipe, onDelete, onSave }) => {
     setEditedRecipe({ ...editedRecipe, [name]: value });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setEditedRecipe({ ...editedRecipe, image: reader.result });
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:8080/recipes/recipes/${recipe._id}`, {
+      const response = await fetch(`${process.env.BACKEND_URL}/recipes/recipes/${recipe._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -140,7 +149,18 @@ const RecipeCard = ({ recipe, onDelete, onSave }) => {
               required
             />
           </div>
-          <button type="submit" className="w-full edit-button text-white py-2 rounded-md  transition duration-300">Update Recipe</button>
+          <div>
+            <label htmlFor="image" className="block text-lg font-medium text-gray-700">Image</label>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+            />
+          </div>
+          <button type="submit" className="w-full edit-button text-white py-2 rounded-md transition duration-300">Update Recipe</button>
         </form>
         <button onClick={() => setIsEditing(false)} className="w-full mt-2 bg-gray-500 text-white py-2 rounded-md hover:bg-gray-600 transition duration-300">Cancel</button>
       </div>

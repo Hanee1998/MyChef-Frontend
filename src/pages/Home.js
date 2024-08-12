@@ -1,7 +1,43 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import '../css/Home.css';
 
 function Home() {
+  const navigate = useNavigate();
+  const adRef = useRef(null);
+
+  const handleAiPageNavigation = async () => {
+    try {
+      navigate('/recipesGenerator');
+    } catch (error) {
+      toast.error('Failed to Navigate');
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    const loadAds = () => {
+      if (adRef.current) {
+        try {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (e) {
+          console.error('Adsbygoogle error:', e);
+        }
+      }
+    };
+
+    // Check if adsbygoogle is defined and loaded
+    const interval = setInterval(() => {
+      if (window.adsbygoogle && window.adsbygoogle.loaded) {
+        loadAds();
+        clearInterval(interval);
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <main className="home-content">
       <section className="hero-section">
@@ -11,7 +47,7 @@ function Home() {
             Welcome to MyChef! Let our AI create personalized recipes just for you. Whether you’re a novice cook or a seasoned chef, our AI will help you discover new dishes tailored to your taste and dietary preferences.
           </p>
           <div className="hero-buttons">
-            <button className="btn-primary">Get Started</button>
+            <button onClick={handleAiPageNavigation} className="btn-primary">Get Started</button>
           </div>
         </div>
         <div className="hero-image">
@@ -51,7 +87,6 @@ function Home() {
           <p>
             Our AI-generated recipes come with detailed instructions and expert tips to help you cook with confidence. Discover new dishes and improve your cooking skills with MyChef.
           </p>
-          <button className="btn-primary">Learn More</button>
         </div>
         <div className="cooking-image">
           <img src="cooking-ai.png" alt="Chef" />
@@ -66,6 +101,19 @@ function Home() {
           <img src="image3.jpeg" alt="Food 3" />
           <img src="image4.jpeg" alt="Food 4" />
         </div>
+      </section>
+
+      <section className="ads-section">
+        <ins
+          className="adsbygoogle"
+          ref={adRef}
+          style={{ display: 'block', textAlign: 'center' }}
+          data-ad-layout="in-article"
+          data-ad-format="fluid"
+          data-ad-client="ca-pub-3020048477207370"
+          data-ad-slot="2427965863"
+          data-adtest="on"
+          ></ins>
       </section>
     </main>
   );

@@ -11,12 +11,16 @@ import ProfilePersonalInfo from './pages/ProfilePersonalInfo';
 import ProfilePassword from './pages/ProfilePassword';
 import ContactUs from './pages/ContactUs';
 import MyRecipe from './pages/MyRecipe';
-import UserRecipes from './pages/UserRecipes'
+import UserRecipes from './pages/UserRecipes';
 import RecipeDetails from './pages/RecipeDetails';
 import AboutUs from './pages/AboutUs';
 import AddRecipes from './pages/AddRecipes';
-import RecepieGenerator from './pages/RecipesGenerate'
-import PurchasePremium from './pages/PurchasePremium'
+import RecipeGenerator from './pages/RecipesGenerate';
+import PurchasePremium from './pages/PurchasePremium';
+import SavedRecipes from './pages/SavedRecipes';
+import AdminSettings from './pages/AdminSettings';
+import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
+
 const App = () => {
   return (
     <Router>
@@ -26,22 +30,21 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/profile/*" element={<Profile />}>
+            <Route path="/profile/*" element={ <Profile /> }>
               <Route path="personal-info" element={<ProfilePersonalInfo />} />
               <Route path="password" element={<ProfilePassword />} />
               <Route path="myRecipe" element={<MyRecipe />} />
               <Route path="purchase-premium" element={<PurchasePremium />} />
-
-
-            </Route>            <Route path="/" element={<Home />} />
+              <Route path="saved-recipes" element={<SavedRecipes />} />
+            </Route>
+            <Route path="/" element={<Home />} />
             <Route path="/contactus" element={<ContactUs />} />
             <Route path="/aboutus" element={<AboutUs />} />
-            <Route path="/addRecipes" element={<AddRecipes  />} />
-            <Route path="/userRecipes" element={<UserRecipes  />} />
+            <Route path="/addRecipes" element={<AddRecipes />}  />
+            <Route path="/userRecipes" element={<UserRecipes />}  />
             <Route path="/recipes/:id" element={<RecipeDetails />} />
-
-            <Route path="/recipesGenerator" element={<RecepieGenerator  />} />
-
+            <Route path="/recipesGenerator" element={<RecipeGenerator />} />
+            <Route path="/admin/settings" element={<PrivateRoute element={<AdminSettings />} admin />} />
           </Routes>
         </Layout>
       </AuthProvider>
@@ -50,5 +53,3 @@ const App = () => {
 };
 
 export default App;
-
-

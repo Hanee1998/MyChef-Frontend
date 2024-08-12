@@ -11,6 +11,7 @@ const Profile = () => {
           <li><NavLink to="/profile/password" className={({ isActive }) => isActive ? "active" : ""}>Change Password</NavLink></li>
           <li><NavLink to="/profile/myRecipe" className={({ isActive }) => isActive ? "active" : ""}>My Recipe</NavLink></li>
           <li><NavLink to="/profile/purchase-premium" className={({ isActive }) => isActive ? "active" : ""}>Purchase Premium</NavLink></li>
+          <li><NavLink to="/profile/saved-recipes" className={({ isActive }) => isActive ? "active" : ""}>Saved Recipe</NavLink></li>
 
         </ul>
       </div>

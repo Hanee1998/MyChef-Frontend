@@ -11,7 +11,7 @@ const RecipeDetails = () => {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/recipes/recipes/${id}`);
+        const response = await fetch(`${process.env.BACKEND_URL}/recipes/recipes/${id}`);
         if (response.ok) {
           const data = await response.json();
           setRecipe(data);

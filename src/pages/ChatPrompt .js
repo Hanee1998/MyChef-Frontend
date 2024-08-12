@@ -29,7 +29,7 @@ const ChatPrompt = () => {
     }, {
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer OPEN_API`
+            'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`
         }
     });
 

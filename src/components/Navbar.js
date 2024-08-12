@@ -62,6 +62,54 @@ const Navbar = () => {
     setAnchorElUser(null);
   };
 
+  const renderNavItems = () => {
+    if (!currentUser) {
+      return (
+        <>
+          <MenuItem onClick={handleCloseNavMenu}>
+            <a href="/Login" style={{ textDecoration: 'none', color: 'inherit' }}>Login</a>
+          </MenuItem>
+          <MenuItem onClick={handleCloseNavMenu}>
+            <a href="/Signup" style={{ textDecoration: 'none', color: 'inherit' }}>Signup</a>
+          </MenuItem>
+        </>
+      );
+    }
+
+    if (currentUser.isAdmin) {
+      return (
+        <>
+          <MenuItem onClick={handleCloseNavMenu}>
+            <a href="/admin/settings" style={{ textDecoration: 'none', color: 'inherit' }}>Admin Settings</a>
+          </MenuItem>
+        </>
+      );
+    }
+
+    return (
+      <>
+       <MenuItem onClick={handleCloseNavMenu}>
+          <a href="/" style={{ textDecoration: 'none', color: 'inherit' }}>Home</a>
+        </MenuItem>
+        <MenuItem onClick={handleCloseNavMenu}>
+          <a href="/addRecipes" style={{ textDecoration: 'none', color: 'inherit' }}>Add Recipes</a>
+        </MenuItem>
+        <MenuItem onClick={handleCloseNavMenu}>
+          <a href="/userRecipes" style={{ textDecoration: 'none', color: 'inherit' }}>User Recipes</a>
+        </MenuItem>
+        <MenuItem onClick={handleCloseNavMenu}>
+          <a href="/recipesGenerator" style={{ textDecoration: 'none', color: 'inherit' }}>Recipes Generator</a>
+        </MenuItem>
+        <MenuItem onClick={handleCloseNavMenu}>
+          <a href="/contactus" style={{ textDecoration: 'none', color: 'inherit' }}>Contact Us</a>
+        </MenuItem>
+        <MenuItem onClick={handleCloseNavMenu}>
+          <a href="/aboutus" style={{ textDecoration: 'none', color: 'inherit' }}>About Us</a>
+        </MenuItem>
+      </>
+    );
+  };
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -113,37 +161,7 @@ const Navbar = () => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              <MenuItem onClick={handleCloseNavMenu}>
-                <a href="/" style={{ textDecoration: 'none', color: 'inherit' }}>Home</a>
-              </MenuItem>
-              {currentUser ? (
-                <>
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <a href="/addRecipes" style={{ textDecoration: 'none', color: 'inherit' }}>Add Recipes</a>
-                  </MenuItem>
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <a href="/userRecipes" style={{ textDecoration: 'none', color: 'inherit' }}>User Recipes</a>
-                  </MenuItem>
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <a href="/recipesGenerator" style={{ textDecoration: 'none', color: 'inherit' }}>Recipes Generator</a>
-                  </MenuItem>
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <a href="/contactus" style={{ textDecoration: 'none', color: 'inherit' }}>Contact Us</a>
-                  </MenuItem>
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <a href="/aboutus" style={{ textDecoration: 'none', color: 'inherit' }}>About Us</a>
-                  </MenuItem>
-                </>
-              ) : (
-                <>
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <a href="/Login" style={{ textDecoration: 'none', color: 'inherit' }}>Login</a>
-                  </MenuItem>
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <a href="/Signup" style={{ textDecoration: 'none', color: 'inherit' }}>Signup</a>
-                  </MenuItem>
-                </>
-              )}
+              {renderNavItems()}
             </Menu>
           </Box>
           <Typography
@@ -169,57 +187,8 @@ const Navbar = () => {
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
-              <a href="/" style={{ textDecoration: 'none', color: 'inherit' }}>Home</a>
             </Button>
-            {currentUser ? (
-              <>
-                <Button
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
-                >
-                  <a href="/addRecipes" style={{ textDecoration: 'none', color: 'inherit' }}>Add Recipes</a>
-                </Button>
-                <Button
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
-                >
-                  <a href="/userRecipes" style={{ textDecoration: 'none', color: 'inherit' }}>User Recipes</a>
-                </Button>
-                <Button
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
-                >
-                  <a href="/recipesGenerator" style={{ textDecoration: 'none', color: 'inherit' }}>Recipes Generator</a>
-                </Button>
-                <Button
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
-                >
-                  <a href="/contactus" style={{ textDecoration: 'none', color: 'inherit' }}>Contact Us</a>
-                </Button>
-                <Button
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
-                >
-                  <a href="/aboutus" style={{ textDecoration: 'none', color: 'inherit' }}>About Us</a>
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
-                >
-                  <a href="/Login" style={{ textDecoration: 'none', color: 'inherit' }}>Login</a>
-                </Button>
-                <Button
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
-                >
-                  <a href="/Signup" style={{ textDecoration: 'none', color: 'inherit' }}>Signup</a>
-                </Button>
-              </>
-            )}
+            {renderNavItems()}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>

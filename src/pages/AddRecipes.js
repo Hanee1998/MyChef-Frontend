@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import imageCompression from 'browser-image-compression';
 
 const AddRecipes = () => {
   const { currentUser } = useAuth();
@@ -16,7 +17,8 @@ const AddRecipes = () => {
     steps: '',
     cuisine: '',
     style: '',
-    protein: ''
+    protein: '',
+    image: '' // New field for image
   });
 
   const handleChange = (e) => {
@@ -25,6 +27,31 @@ const AddRecipes = () => {
       ...recipe,
       [name]: value
     });
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 800,
+        useWebWorker: true
+      };
+
+      const compressedFile = await imageCompression(file, options);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setRecipe({
+          ...recipe,
+          image: reader.result
+        });
+      };
+      reader.readAsDataURL(compressedFile);
+    } catch (error) {
+      console.error('Error compressing image:', error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -40,7 +67,7 @@ const AddRecipes = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/recipes/addRecipes', {
+      const response = await fetch('${process.env.BACKEND_URL}/recipes/addRecipes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -58,7 +85,8 @@ const AddRecipes = () => {
           steps: '',
           cuisine: '',
           style: '',
-          protein: ''
+          protein: '',
+          image: '' // Reset image field
         });
       } else if (response.status === 403) {
         const result = await response.json();
@@ -175,6 +203,17 @@ const AddRecipes = () => {
             onChange={handleChange}
             className="mt-1 block w-full border border-gray-300 rounded-md p-2"
             required
+          />
+        </div>
+        <div>
+          <label htmlFor="image" className="block text-lg font-medium text-gray-700">Image</label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           />
         </div>
         <button type="submit" className="add-recipe-button w-full  text-white py-2 rounded-md transition duration-300">Submit Recipe</button>
