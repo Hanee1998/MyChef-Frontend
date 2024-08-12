@@ -17,7 +17,7 @@ const RecipeCardForDetails = ({ recipe }) => {
   const handleLike = async () => {
     if (!currentUser) return;
 
-    const url = `${process.env.BACKEND_URL}/recipes/recipes/${recipe._id}/${liked ? 'unlike' : 'like'}`;
+    const url = `https://mychef-backend-dlbj.onrender.com/recipes/recipes/${recipe._id}/${liked ? 'unlike' : 'like'}`;
 
     try {
       const response = await fetch(url, {

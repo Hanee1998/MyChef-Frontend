@@ -16,7 +16,7 @@ const PurchasePremium = () => {
     const fetchUserDetails = async () => {
       if (currentUser) {
         try {
-          const response = await fetch(`${process.env.BACKEND_URL}/users/${currentUser.email}`);
+          const response = await fetch(`https://mychef-backend-dlbj.onrender.com/users/${currentUser.email}`);
           if (response.ok) {
             const data = await response.json();
             setUser(data);
@@ -31,7 +31,7 @@ const PurchasePremium = () => {
 
     const fetchPremiumPrice = async () => {
       try {
-        const response = await fetch(`${process.env.BACKEND_URL}/settings/premiumMembershipPrice`);
+        const response = await fetch(`https://mychef-backend-dlbj.onrender.com/settings/premiumMembershipPrice`);
         if (response.ok) {
           const data = await response.json();
           setPremiumPrice(data.price);
@@ -51,7 +51,7 @@ const PurchasePremium = () => {
 
   const handlePaymentSuccess = async (order) => {
     try {
-      const response = await fetch(`${process.env.BACKEND_URL}/users/${currentUser.email}/purchasePremium`, {
+      const response = await fetch(`https://mychef-backend-dlbj.onrender.com/users/${currentUser.email}/purchasePremium`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

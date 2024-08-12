@@ -9,7 +9,7 @@ const AdminSettings = () => {
   useEffect(() => {
     const fetchPrice = async () => {
       try {
-        const response = await fetch(`${process.env.BACKEND_URL}/settings/premiumMembershipPrice`);
+        const response = await fetch(`https://mychef-backend-dlbj.onrender.com/settings/premiumMembershipPrice`);
         const data = await response.json();
         setPrice(data.price);
       } catch (error) {
@@ -24,7 +24,7 @@ const AdminSettings = () => {
 
   const handleUpdate = async () => {
     try {
-      const response = await fetch(`${process.env.BACKEND_URL}/settings/premiumMembershipPrice`, {
+      const response = await fetch(`https://mychef-backend-dlbj.onrender.com/settings/premiumMembershipPrice`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

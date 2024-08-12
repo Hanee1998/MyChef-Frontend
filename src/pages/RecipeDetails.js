@@ -11,7 +11,7 @@ const RecipeDetails = () => {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const response = await fetch(`${process.env.BACKEND_URL}/recipes/recipes/${id}`);
+        const response = await fetch(`https://mychef-backend-dlbj.onrender.com/recipes/recipes/${id}`);
         if (response.ok) {
           const data = await response.json();
           setRecipe(data);

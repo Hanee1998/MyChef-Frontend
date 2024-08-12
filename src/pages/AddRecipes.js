@@ -67,7 +67,7 @@ const AddRecipes = () => {
     };
 
     try {
-      const response = await fetch(`${process.env.BACKEND_URL}/recipes/addRecipes`, {
+      const response = await fetch(`https://mychef-backend-dlbj.onrender.com/recipes/addRecipes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

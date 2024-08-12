@@ -20,7 +20,7 @@ const RecipeDisplay = ({ recipe, selectedTitleCard, protein, style, cuisine }) =
   const handleToggleLike = async () => {
     if (!currentUser) return;
 
-    const url = `${process.env.BACKEND_URL}/recipes/recipes/${recipe._id}/${liked ? 'unlike' : 'like'}`;
+    const url = `https://mychef-backend-dlbj.onrender.com/recipes/recipes/${recipe._id}/${liked ? 'unlike' : 'like'}`;
 
     try {
       const response = await fetch(url, {
@@ -47,7 +47,7 @@ const RecipeDisplay = ({ recipe, selectedTitleCard, protein, style, cuisine }) =
   const handleToggleSave = async () => {
     if (!currentUser) return;
 
-    const url = `${process.env.BACKEND_URL}/users/${currentUser.email}/saveRecipe`;
+    const url = `https://mychef-backend-dlbj.onrender.com/users/${currentUser.email}/saveRecipe`;
 
     try {
       const response = await fetch(url, {

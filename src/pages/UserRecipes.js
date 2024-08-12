@@ -10,7 +10,7 @@ const UserRecipes = () => {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await fetch(`${process.env.BACKEND_URL}/recipes/recipes`);
+        const response = await fetch(`https://mychef-backend-dlbj.onrender.com/recipes/recipes`);
         if (response.ok) {
           const data = await response.json();
           setRecipes(data);

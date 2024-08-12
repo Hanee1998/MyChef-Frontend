@@ -11,7 +11,7 @@ const SavedRecipes = () => {
     const fetchSavedRecipes = async () => {
       if (currentUser) {
         try {
-          const response = await fetch(`${process.env.BACKEND_URL}/users/${currentUser.email}/savedRecipes`);
+          const response = await fetch(`https://mychef-backend-dlbj.onrender.com/users/${currentUser.email}/savedRecipes`);
           if (response.ok) {
             const data = await response.json();
             setSavedRecipes(data);

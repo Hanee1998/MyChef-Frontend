@@ -24,7 +24,7 @@ const RecipeCard = ({ recipe, onDelete, onSave }) => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.BACKEND_URL}/recipes/recipes/${recipe._id}`, {
+      const response = await fetch(`https://mychef-backend-dlbj.onrender.com/recipes/recipes/${recipe._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

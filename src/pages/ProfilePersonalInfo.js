@@ -21,7 +21,7 @@ const ProfilePersonalInfo = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`${process.env.BACKEND_URL}/users/${currentUser.email}`);
+        const response = await fetch(`https://mychef-backend-dlbj.onrender.com/users/${currentUser.email}`);
         if (response.ok) {
           const data = await response.json();
           if (data) {
@@ -107,7 +107,7 @@ const ProfilePersonalInfo = () => {
     }
 
     try {
-      const response = await fetch(`${process.env.BACKEND_URL}/users/${currentUser.email}`, {
+      const response = await fetch(`https://mychef-backend-dlbj.onrender.com/users/${currentUser.email}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
