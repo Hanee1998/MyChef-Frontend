@@ -24,26 +24,41 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const fetchUserDetails = async (user) => {
-    // Assume there's an endpoint to fetch user details including isAdmin
-    const response = await fetch(`${process.env.BACKEND_URL}/users/${user.email}`);
-    const data = await response.json();
-    return data;
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/${user.email}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch user details');
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+      return {}; // Return a default value or handle error appropriately
+    }
   };
 
   const signup = async (email, password) => {
-    const result = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(result.user, { displayName: email.split('@')[0] });
-    const userDetails = await fetchUserDetails(result.user);
-    setCurrentUser({ ...result.user, ...userDetails });
-    sessionStorage.setItem('user', JSON.stringify({ ...result.user, ...userDetails }));
-    await saveUserToDB(result.user, 'POST'); // Save user to database
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(result.user, { displayName: email.split('@')[0] });
+      const userDetails = await fetchUserDetails(result.user);
+      setCurrentUser({ ...result.user, ...userDetails });
+      sessionStorage.setItem('user', JSON.stringify({ ...result.user, ...userDetails }));
+      await saveUserToDB(result.user, 'POST'); // Save user to database
+    } catch (error) {
+      console.error('Error during signup:', error);
+    }
   };
 
   const login = async (email, password) => {
-    const result = await signInWithEmailAndPassword(auth, email, password);
-    const userDetails = await fetchUserDetails(result.user);
-    setCurrentUser({ ...result.user, ...userDetails });
-    sessionStorage.setItem('user', JSON.stringify({ ...result.user, ...userDetails }));
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const userDetails = await fetchUserDetails(result.user);
+      setCurrentUser({ ...result.user, ...userDetails });
+      sessionStorage.setItem('user', JSON.stringify({ ...result.user, ...userDetails }));
+    } catch (error) {
+      console.error('Error during login:', error);
+    }
   };
 
   const logout = async () => {
@@ -57,17 +72,25 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const resetPassword = (email) => {
-    return sendPasswordResetEmail(auth, email);
+  const resetPassword = async (email) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+    }
   };
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const userDetails = await fetchUserDetails(result.user);
-    setCurrentUser({ ...result.user, ...userDetails });
-    sessionStorage.setItem('user', JSON.stringify({ ...result.user, ...userDetails }));
-    await saveUserToDB(result.user, 'PUT'); // Save user to database
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const userDetails = await fetchUserDetails(result.user);
+      setCurrentUser({ ...result.user, ...userDetails });
+      sessionStorage.setItem('user', JSON.stringify({ ...result.user, ...userDetails }));
+      await saveUserToDB(result.user, 'PUT'); // Save user to database
+    } catch (error) {
+      console.error('Error during Google sign-in:', error);
+    }
   };
 
   const changePassword = async (currentPassword, newPassword) => {
@@ -77,7 +100,8 @@ export const AuthProvider = ({ children }) => {
         await reauthenticateWithCredential(currentUser, credential);
         await updatePassword(currentUser, newPassword);
       } catch (error) {
-        throw new Error(error);
+        console.error('Error changing password:', error);
+        throw new Error(error.message);
       }
     }
   };
@@ -85,20 +109,24 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userDetails = await fetchUserDetails(user);
-        setCurrentUser({ ...user, ...userDetails });
-        sessionStorage.setItem('user', JSON.stringify({ ...user, ...userDetails }));
+        try {
+          const userDetails = await fetchUserDetails(user);
+          setCurrentUser({ ...user, ...userDetails });
+          sessionStorage.setItem('user', JSON.stringify({ ...user, ...userDetails }));
+        } catch (error) {
+          console.error('Error setting user state:', error);
+        }
       } else {
         setCurrentUser(null);
         sessionStorage.removeItem('user');
       }
     });
-    return unsubscribe;
+    return () => unsubscribe(); // Cleanup on unmount
   }, []);
 
   const saveUserToDB = async (user, method) => {
     try {
-      const response = await fetch(`${process.env.BACKEND_URL}/users/${user.email}`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/${user.email}`, {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +144,7 @@ export const AuthProvider = ({ children }) => {
         throw new Error('Network response was not ok');
       }
     } catch (error) {
-      console.error('Error saving user to database', error);
+      console.error('Error saving user to database:', error);
     }
   };
 
