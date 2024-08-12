@@ -67,7 +67,7 @@ const AddRecipes = () => {
     };
 
     try {
-      const response = await fetch('${process.env.BACKEND_URL}/recipes/addRecipes', {
+      const response = await fetch(`${process.env.BACKEND_URL}/recipes/addRecipes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

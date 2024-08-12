@@ -31,7 +31,7 @@ const PurchasePremium = () => {
 
     const fetchPremiumPrice = async () => {
       try {
-        const response = await fetch('${process.env.BACKEND_URL}/settings/premiumMembershipPrice');
+        const response = await fetch(`${process.env.BACKEND_URL}/settings/premiumMembershipPrice`);
         if (response.ok) {
           const data = await response.json();
           setPremiumPrice(data.price);
